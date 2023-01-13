@@ -3,29 +3,24 @@ import ArrowDown from '../assets/images/down.png'
 import ArrowUp from '../assets/images/up.png'
 import Check from '../assets/images/check.png'
 import '../assets/dropdown.css'
+import useScience from "../hooks/scienceHook"
 
 const DropDown = () => {
     const [isShow, toggle] = useState(true)
-    const [items, setitems] = useState<any[]>(['Education', 'Art', 'Sport'])
     const [selectedItem, setSelectedItem] = useState<string>()
+    const [sciences, addScience] = useScience() // Custom hook for science
 
     const setNewItem = (event: React.KeyboardEvent<HTMLInputElement> & {key: string}): any => {
         const { key } = event;
         let target = event.target as HTMLInputElement;
         let value = target.value;
-
         // Open option list as sson as enter new value
         toggle(true)
 
         // Checking Enter key to save new option key
         if (key === 'Enter') {
-            if(target.value.trim()) {
-                setitems((oldValue) => {
-                    return [
-                        ...oldValue,
-                        !oldValue.includes(value) && value
-                    ]
-                })
+            if(value.trim() && !sciences.includes(value)) {
+                addScience(value)
 
                 // Make selected boc empty after entring new option 
                 target.value = ''
@@ -54,7 +49,7 @@ const DropDown = () => {
             </div>
             {
              isShow && <div className="option-wrapper">
-                {items.map((item) => (
+                {sciences.map((item) => (
                     <p onClick={() => setAsSelectedItem(item)} key={item} className={`option-item ${selectedItem === item ? 'selected-option': ''}`}>
                         {item}
                         {item === selectedItem &&(<img src={Check} alt="check" className="check-icon" />)}
